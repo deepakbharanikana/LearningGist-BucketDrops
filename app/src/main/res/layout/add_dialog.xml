@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                android:padding="20dp">
+
+    <LinearLayout
+        android:id="@+id/title_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/tv_title"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:fontFamily="sans-serif-thin"
+            android:gravity="center_vertical"
+            android:text="Add a drop"
+            android:textSize="20sp"/>
+
+        <ImageButton
+            android:id="@+id/ib_close"
+            android:background="@null"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_alignTop="@id/tv_title"
+            android:src="@drawable/ic_close"
+            />
+
+    </LinearLayout>
+
+
+    <EditText
+        android:id="@+id/et_addTitle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:padding="10dp"
+        android:textSize="24sp"
+        android:fontFamily="sans-serif-thin"
+        android:singleLine="true"
+        android:inputType="textVisiblePassword"
+        android:background="@drawable/edittext_selector"
+        android:layout_below="@id/title_view"
+        android:hint="@string/what_is_it"
+        />
+
+    <DatePicker
+        android:id="@+id/datepicker"
+        android:layout_marginTop="20dp"
+        android:layout_width="match_parent"
+        android:layout_height="100dp"
+        android:layout_below="@id/et_addTitle"/>
+
+    <Button
+        android:id="@+id/btn_addDrop"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/datepicker"
+        android:text="@string/add_it"
+        android:background="@drawable/button_selector"
+        android:layout_marginTop="20dp"
+        android:fontFamily="sans-serif-thin"
+        android:gravity="center"
+        android:paddingBottom="10dp"
+        android:paddingLeft="20dp"
+        android:paddingRight="20dp"
+        android:paddingTop="10dp"
+        android:textColor="@color/button_color_selector"
+        android:textSize="24sp"
+        android:textAllCaps="false"
+        />
+</RelativeLayout>

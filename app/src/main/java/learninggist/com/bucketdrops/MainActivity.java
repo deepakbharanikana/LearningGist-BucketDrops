@@ -6,7 +6,6 @@ import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 
@@ -44,8 +43,15 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public void onClick(View v) {
        switch (v.getId()){
            case R.id.btn_addDrop:
-               Toast.makeText(MainActivity.this, "Button Clicked", Toast.LENGTH_SHORT).show();
+               showAddDialog();
                break;
        }
+    }
+
+    private void showAddDialog() {
+        AddDialog dialog = new AddDialog();
+
+        dialog.show(getSupportFragmentManager(),"AddDialog");
+        dialog.setCancelable(true);
     }
 }
