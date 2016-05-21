@@ -4,30 +4,30 @@
                 android:layout_height="match_parent">
 
     <ImageView
-        android:id="@+id/empty_image_view"
-        android:layout_width="192dp"
-        android:layout_margin="64dp"
-        android:layout_height="192dp"
+        android:id="@+id/iv_emptyLogo"
+        android:layout_width="@dimen/iv_width_dimen"
+        android:layout_height="@dimen/iv_height_dimen"
         android:layout_centerHorizontal="true"
+        android:layout_margin="80dp"
         android:src="@drawable/empty_logo"/>
 
     <Button
+        android:id="@+id/btn_addDrop"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/add_drop_button"
-        android:textSize="24sp"
-        android:fontFamily="sans-serif-thin"
-        android:background="@drawable/button_selector"
-        android:layout_below="@id/empty_image_view"
-        android:text="@string/add_a_drop"
-        android:layout_margin="40dp"
-        android:gravity="center"
-        android:textColor="@color/button_color_selector"
+        android:layout_below="@id/iv_emptyLogo"
         android:layout_centerHorizontal="true"
+        android:layout_margin="40dp"
+        android:background="@drawable/button_selector"
+        android:fontFamily="sans-serif-thin"
+        android:gravity="center"
+        android:paddingBottom="10dp"
         android:paddingLeft="20dp"
         android:paddingRight="20dp"
-        android:paddingBottom="10dp"
         android:paddingTop="10dp"
+        android:text="@string/add_a_drop"
+        android:textColor="@color/button_color_selector"
+        android:textSize="24sp"
         />
 
 
