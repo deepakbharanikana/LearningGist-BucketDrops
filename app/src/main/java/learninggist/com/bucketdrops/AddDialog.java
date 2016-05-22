@@ -12,6 +12,9 @@ import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageButton;
 
+import io.realm.Realm;
+import io.realm.RealmConfiguration;
+import learninggist.com.bucketdrops.beans.Drop;
 
 
 /**
@@ -24,13 +27,14 @@ public class AddDialog extends DialogFragment implements View.OnClickListener {
     private ImageButton mDialogClose;
     private DatePicker mDatePicker;
 
-    public AddDialog(){
+    public AddDialog() {
     }
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         getDialog().getWindow().requestFeature(Window.FEATURE_NO_TITLE);
-        return inflater.inflate(R.layout.add_dialog, container,false);
+        return inflater.inflate(R.layout.add_dialog, container, false);
     }
 
     @Override
@@ -42,15 +46,37 @@ public class AddDialog extends DialogFragment implements View.OnClickListener {
         mDatePicker = (DatePicker) view.findViewById(R.id.datepicker);
 
         mDialogClose.setOnClickListener(this);
+        mBtnAddDrop.setOnClickListener(this);
     }
 
 
     @Override
     public void onClick(View v) {
-        switch (v.getId()){
-            case R.id.ib_close:
-                dismiss();
+        switch (v.getId()) {
+            case R.id.btn_addDrop:
+                if (validateDrop()) {
+                    addDrop();
+                }
                 break;
         }
+        dismiss();
+
+    }
+
+    private void addDrop() {
+        RealmConfiguration config = new RealmConfiguration.Builder(getActivity()).build();
+        Realm.setDefaultConfiguration(config);
+        Realm realm = Realm.getDefaultInstance();
+        Drop drop = new Drop(mEtWhat.getText().toString(), System.currentTimeMillis(), 0, false);
+        realm.beginTransaction();
+        realm.copyToRealmOrUpdate(drop);
+        realm.commitTransaction();
+        realm.close();
+    }
+
+    private boolean validateDrop() {
+        if (mEtWhat != null && mEtWhat.getText().length() != 0)
+            return true;
+        return false;
     }
 }
