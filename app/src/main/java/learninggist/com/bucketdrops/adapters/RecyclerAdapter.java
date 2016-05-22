@@ -7,30 +7,21 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import java.util.ArrayList;
-import java.util.List;
-
+import io.realm.RealmResults;
 import learninggist.com.bucketdrops.R;
+import learninggist.com.bucketdrops.beans.Drop;
 
 /**
  * Created by Deepak on 5/21/16.
  */
 public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.RecyclerHolder> {
 
-    private List<String> mItems = new ArrayList<>();
+    private RealmResults<Drop> mItems;
     private LayoutInflater mLayoutInflater;
 
-    public RecyclerAdapter(Context context) {
-        mItems = generateTempValues();
+    public RecyclerAdapter(Context context, RealmResults<Drop> results) {
         mLayoutInflater = LayoutInflater.from(context);
-    }
-
-    private List<String> generateTempValues() {
-        for (int i = 0; i < 100; i++) {
-            String item = "item" + i;
-            mItems.add(item);
-        }
-        return mItems;
+        update(results);
     }
 
     @Override
@@ -42,12 +33,18 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.Recycl
 
     @Override
     public void onBindViewHolder(RecyclerHolder holder, int position) {
-        holder.bindData(mItems.get(position));
+        Drop drop = mItems.get(position);
+        holder.bindData(drop.getWhatJob());
     }
 
     @Override
     public int getItemCount() {
         return mItems.size();
+    }
+
+    public void update(RealmResults<Drop> results) {
+        mItems = results;
+        notifyDataSetChanged();
     }
 
     public class RecyclerHolder extends RecyclerView.ViewHolder {

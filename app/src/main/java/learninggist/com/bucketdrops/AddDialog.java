@@ -13,7 +13,6 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 
 import io.realm.Realm;
-import io.realm.RealmConfiguration;
 import learninggist.com.bucketdrops.beans.Drop;
 
 
@@ -64,8 +63,6 @@ public class AddDialog extends DialogFragment implements View.OnClickListener {
     }
 
     private void addDrop() {
-        RealmConfiguration config = new RealmConfiguration.Builder(getActivity()).build();
-        Realm.setDefaultConfiguration(config);
         Realm realm = Realm.getDefaultInstance();
         Drop drop = new Drop(mEtWhat.getText().toString(), System.currentTimeMillis(), 0, false);
         realm.beginTransaction();

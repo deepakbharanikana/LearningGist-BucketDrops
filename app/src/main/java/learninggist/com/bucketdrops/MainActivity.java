@@ -11,7 +11,11 @@ import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
 
+import io.realm.Realm;
+import io.realm.RealmChangeListener;
+import io.realm.RealmResults;
 import learninggist.com.bucketdrops.adapters.RecyclerAdapter;
+import learninggist.com.bucketdrops.beans.Drop;
 
 
 /**
@@ -23,6 +27,17 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private ImageView mBackground;
     private Button mAddDropBtn;
     private RecyclerView mRecyclerView;
+    private Realm mRealm;
+    private RealmResults<Drop> mResults;
+    private RecyclerAdapter mAdapter;
+
+    private RealmChangeListener
+            mRealmChangeListener = new RealmChangeListener() {
+        @Override
+        public void onChange(Object element) {
+            mAdapter.update(mResults);
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,12 +46,27 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         mToolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(mToolbar);
         setLayoutBackground();
+        mRealm = Realm.getDefaultInstance();
+        mResults = mRealm.where(Drop.class).findAllAsync();
         mAddDropBtn = (Button) findViewById(R.id.btn_addDrop);
         mAddDropBtn.setOnClickListener(this);
         mRecyclerView = (RecyclerView) findViewById(R.id.recyclerView);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
         mRecyclerView.setLayoutManager(linearLayoutManager);
-        mRecyclerView.setAdapter(new RecyclerAdapter(this));
+        mAdapter = new RecyclerAdapter(this, mResults);
+        mRecyclerView.setAdapter(mAdapter);
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        mRealm.addChangeListener(mRealmChangeListener);
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        mRealm.removeChangeListener(mRealmChangeListener);
     }
 
     private void setLayoutBackground() {
@@ -47,19 +77,18 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
 
-
     @Override
     public void onClick(View v) {
-       switch (v.getId()){
-           case R.id.btn_addDrop:
-               showAddDialog();
-               break;
-       }
+        switch (v.getId()) {
+            case R.id.btn_addDrop:
+                showAddDialog();
+                break;
+        }
     }
 
     private void showAddDialog() {
         AddDialog dialog = new AddDialog();
-        dialog.show(getSupportFragmentManager(),"AddDialog");
+        dialog.show(getSupportFragmentManager(), "AddDialog");
         dialog.setCancelable(true);
     }
 }
