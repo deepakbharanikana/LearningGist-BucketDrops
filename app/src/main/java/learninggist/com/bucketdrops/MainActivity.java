@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.Toolbar;
+import android.support.v7.widget.helper.ItemTouchHelper;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -39,6 +40,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
     };
 
+    private SwipeListener mSwipeListener;
+
 
 
     private RealmChangeListener
@@ -63,13 +66,19 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         mRecyclerView = (CustomRecyclerView) findViewById(R.id.recyclerView);
         mRecyclerView.hideIfEmpty(mToolbar);
         mRecyclerView.showIfEmpty(mEmptyView);
-        mAdapter = new RecyclerAdapter(this, mResults, mAddListener);
+        mAdapter = new RecyclerAdapter(this, mRealm, mResults, mAddListener);
         mRecyclerView.setAdapter(mAdapter);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
         mRecyclerView.setLayoutManager(linearLayoutManager);
         mAddDropBtn.setOnClickListener(this);
         setSupportActionBar(mToolbar);
+        SimpleSwipeCallback callback = new SimpleSwipeCallback(mAdapter);
+        ItemTouchHelper helper = new ItemTouchHelper(callback);
+        helper.attachToRecyclerView(mRecyclerView);
         setLayoutBackground();
+
+
+
 
     }
 

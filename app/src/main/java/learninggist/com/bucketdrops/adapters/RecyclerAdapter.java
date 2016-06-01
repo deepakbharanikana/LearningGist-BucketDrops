@@ -8,42 +8,46 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
 
+import io.realm.Realm;
 import io.realm.RealmResults;
 import learninggist.com.bucketdrops.AddListener;
 import learninggist.com.bucketdrops.R;
+import learninggist.com.bucketdrops.SwipeListener;
 import learninggist.com.bucketdrops.beans.Drop;
 
 /**
  * Created by Deepak on 5/21/16.
  */
-public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> implements SwipeListener {
 
     private RealmResults<Drop> mItems;
     private LayoutInflater mLayoutInflater;
     public static final int FOOTER = 1;
     public static final int ITEM = 0;
     private AddListener mAddListener;
+    private Realm mRealm;
 
-    public RecyclerAdapter(Context context, RealmResults<Drop> results) {
+    public RecyclerAdapter(Context context, Realm realm, RealmResults<Drop> results) {
         mLayoutInflater = LayoutInflater.from(context);
         update(results);
+        mRealm = realm;
     }
 
-    public RecyclerAdapter(Context context, RealmResults<Drop> results , AddListener listener) {
+    public RecyclerAdapter(Context context, Realm realm, RealmResults<Drop> results, AddListener listener) {
         mLayoutInflater = LayoutInflater.from(context);
         update(results);
+        mRealm = realm;
         mAddListener = listener;
     }
 
 
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        if(viewType == ITEM){
+        if (viewType == ITEM) {
             View view = mLayoutInflater.inflate(R.layout.list_item, parent, false);
             DropHolder holder = new DropHolder(view);
             return holder;
-        }
-        else{
+        } else {
             View view = mLayoutInflater.inflate(R.layout.add_drop_footer, parent, false);
             FooterHolder holder = new FooterHolder(view);
             return holder;
@@ -53,32 +57,45 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 
     @Override
     public int getItemViewType(int position) {
-        if(mItems == null || position < mItems.size()){
+        if (mItems == null || position < mItems.size()) {
             return ITEM;
-        }
-        else{
+        } else {
             return FOOTER;
         }
     }
 
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
-        if(holder instanceof DropHolder){
-            DropHolder dropHolder = (DropHolder) holder;
-            Drop drop = mItems.get(position);
-            dropHolder.bindData(drop.getWhatJob());
+        if (holder instanceof DropHolder) {
+            if(mItems.get(position).isValid()) {
+                DropHolder dropHolder = (DropHolder) holder;
+                Drop drop = mItems.get(position);
+                dropHolder.bindData(drop.getWhatJob());
+            }
         }
-
     }
 
     @Override
     public int getItemCount() {
-        return mItems.size() +1 ;
+        if (mItems == null || mItems.isEmpty())
+            return 0;
+        else
+            return mItems.size() + 1;
     }
 
     public void update(RealmResults<Drop> results) {
         mItems = results;
         notifyDataSetChanged();
+    }
+
+    @Override
+    public void onSwipe(int adapterPosition) {
+        if (adapterPosition < mItems.size()) {
+            mRealm.beginTransaction();
+            mItems.get(adapterPosition).deleteFromRealm();
+            mRealm.commitTransaction();
+            notifyItemRemoved(adapterPosition);
+        }
     }
 
     public class DropHolder extends RecyclerView.ViewHolder {
@@ -95,7 +112,6 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
             mDropInfo.setText(s);
         }
     }
-
 
 
     public class FooterHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
