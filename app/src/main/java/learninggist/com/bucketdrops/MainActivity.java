@@ -3,8 +3,8 @@ package learninggist.com.bucketdrops;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -16,26 +16,38 @@ import io.realm.RealmChangeListener;
 import io.realm.RealmResults;
 import learninggist.com.bucketdrops.adapters.RecyclerAdapter;
 import learninggist.com.bucketdrops.beans.Drop;
+import learninggist.com.bucketdrops.widgets.CustomRecyclerView;
 
 
 /**
  * Created by Deepak on 5/21/16.
  */
-public class MainActivity extends AppCompatActivity implements View.OnClickListener {
+public class MainActivity extends AppCompatActivity implements View.OnClickListener{
 
     private Toolbar mToolbar;
     private ImageView mBackground;
     private Button mAddDropBtn;
-    private RecyclerView mRecyclerView;
+    private CustomRecyclerView mRecyclerView;
     private Realm mRealm;
     private RealmResults<Drop> mResults;
     private RecyclerAdapter mAdapter;
+    private View mEmptyView;
+    private AddListener mAddListener = new AddListener() {
+        @Override
+        public void add() {
+            showAddDialog();
+        }
+    };
+
+
 
     private RealmChangeListener
             mRealmChangeListener = new RealmChangeListener() {
         @Override
         public void onChange(Object element) {
+            Log.d("Deepak", "onChange: was called" + element);
             mAdapter.update(mResults);
+
         }
     };
 
@@ -43,30 +55,34 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main_activity);
-        mToolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(mToolbar);
-        setLayoutBackground();
         mRealm = Realm.getDefaultInstance();
         mResults = mRealm.where(Drop.class).findAllAsync();
+        mToolbar = (Toolbar) findViewById(R.id.toolbar);
+        mEmptyView = findViewById(R.id.emptyView);
         mAddDropBtn = (Button) findViewById(R.id.btn_addDrop);
-        mAddDropBtn.setOnClickListener(this);
-        mRecyclerView = (RecyclerView) findViewById(R.id.recyclerView);
+        mRecyclerView = (CustomRecyclerView) findViewById(R.id.recyclerView);
+        mRecyclerView.hideIfEmpty(mToolbar);
+        mRecyclerView.showIfEmpty(mEmptyView);
+        mAdapter = new RecyclerAdapter(this, mResults, mAddListener);
+        mRecyclerView.setAdapter(mAdapter);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
         mRecyclerView.setLayoutManager(linearLayoutManager);
-        mAdapter = new RecyclerAdapter(this, mResults);
-        mRecyclerView.setAdapter(mAdapter);
+        mAddDropBtn.setOnClickListener(this);
+        setSupportActionBar(mToolbar);
+        setLayoutBackground();
+
     }
 
     @Override
     protected void onStart() {
         super.onStart();
-        mRealm.addChangeListener(mRealmChangeListener);
+        mResults.addChangeListener(mRealmChangeListener);
     }
 
     @Override
     protected void onStop() {
         super.onStop();
-        mRealm.removeChangeListener(mRealmChangeListener);
+        mResults.removeChangeListener(mRealmChangeListener);
     }
 
     private void setLayoutBackground() {
@@ -91,4 +107,5 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         dialog.show(getSupportFragmentManager(), "AddDialog");
         dialog.setCancelable(true);
     }
+
 }
