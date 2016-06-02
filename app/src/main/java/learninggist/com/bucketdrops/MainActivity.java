@@ -23,7 +23,7 @@ import learninggist.com.bucketdrops.widgets.CustomRecyclerView;
 /**
  * Created by Deepak on 5/21/16.
  */
-public class MainActivity extends AppCompatActivity implements View.OnClickListener{
+public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
     private Toolbar mToolbar;
     private ImageView mBackground;
@@ -40,8 +40,24 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
     };
 
-    private SwipeListener mSwipeListener;
+    private DropListener mDropListener = new DropListener() {
+        @Override
+        public void MarkCompleted(int position) {
+            showMarkDialog(position);
+        }
+    };
 
+    private void showMarkDialog(int position) {
+        MarkDialog markDialog = new MarkDialog();
+        Bundle bundle = new Bundle();
+        bundle.putInt("POSITION", position);
+        markDialog.setArguments(bundle);
+        markDialog.show(getSupportFragmentManager(), "MARK");
+        markDialog.setCancelable(true);
+
+    }
+
+    private SwipeListener mSwipeListener;
 
 
     private RealmChangeListener
@@ -66,7 +82,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         mRecyclerView = (CustomRecyclerView) findViewById(R.id.recyclerView);
         mRecyclerView.hideIfEmpty(mToolbar);
         mRecyclerView.showIfEmpty(mEmptyView);
-        mAdapter = new RecyclerAdapter(this, mRealm, mResults, mAddListener);
+        mAdapter = new RecyclerAdapter(this, mRealm, mResults, mAddListener, mDropListener);
         mRecyclerView.setAdapter(mAdapter);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
         mRecyclerView.setLayoutManager(linearLayoutManager);
@@ -76,8 +92,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         ItemTouchHelper helper = new ItemTouchHelper(callback);
         helper.attachToRecyclerView(mRecyclerView);
         setLayoutBackground();
-
-
 
 
     }

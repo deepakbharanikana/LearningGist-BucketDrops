@@ -11,6 +11,7 @@ import android.widget.TextView;
 import io.realm.Realm;
 import io.realm.RealmResults;
 import learninggist.com.bucketdrops.AddListener;
+import learninggist.com.bucketdrops.DropListener;
 import learninggist.com.bucketdrops.R;
 import learninggist.com.bucketdrops.SwipeListener;
 import learninggist.com.bucketdrops.beans.Drop;
@@ -20,6 +21,7 @@ import learninggist.com.bucketdrops.beans.Drop;
  */
 public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> implements SwipeListener {
 
+    private DropListener mDropListener;
     private RealmResults<Drop> mItems;
     private LayoutInflater mLayoutInflater;
     public static final int FOOTER = 1;
@@ -33,11 +35,12 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         mRealm = realm;
     }
 
-    public RecyclerAdapter(Context context, Realm realm, RealmResults<Drop> results, AddListener listener) {
+    public RecyclerAdapter(Context context, Realm realm, RealmResults<Drop> results, AddListener listener, DropListener dropListener) {
         mLayoutInflater = LayoutInflater.from(context);
         update(results);
         mRealm = realm;
         mAddListener = listener;
+        mDropListener = dropListener;
     }
 
 
@@ -98,7 +101,8 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         }
     }
 
-    public class DropHolder extends RecyclerView.ViewHolder {
+
+    public class DropHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         private TextView mDropInfo;
         private TextView mDropDate;
 
@@ -106,10 +110,16 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
             super(itemView);
             mDropInfo = (TextView) itemView.findViewById(R.id.tv_dropInfo);
             mDropDate = (TextView) itemView.findViewById(R.id.tv_dropDate);
+            itemView.setOnClickListener(this);
         }
 
         public void bindData(String s) {
             mDropInfo.setText(s);
+        }
+
+        @Override
+        public void onClick(View v) {
+            mDropListener.MarkCompleted(getAdapterPosition());
         }
     }
 
