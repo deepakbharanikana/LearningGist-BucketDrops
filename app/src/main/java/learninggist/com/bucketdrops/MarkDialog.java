@@ -8,15 +8,37 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageButton;
-import android.widget.Toast;
 
 /**
  * Created by Deepak on 6/1/16.
  */
-public class MarkDialog extends DialogFragment{
+public class MarkDialog extends DialogFragment {
 
     private ImageButton mBtnClose;
     private Button mBtnCompleted;
+    private MarkCompleteListener mListener;
+
+    View.OnClickListener mClickListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            switch (v.getId()) {
+                case R.id.btn_completed:
+                    setMarkCompleted();
+                    break;
+            }
+            dismiss();
+        }
+    };
+
+    private void setMarkCompleted() {
+        Bundle bundle = getArguments();
+        if(bundle!=null){
+            int position = bundle.getInt("POSITION");
+            mListener.MarkCompleted(position);
+        }
+
+    }
+
 
     @Nullable
     @Override
@@ -29,8 +51,12 @@ public class MarkDialog extends DialogFragment{
         super.onViewCreated(view, savedInstanceState);
         mBtnClose = (ImageButton) view.findViewById(R.id.btn_close);
         mBtnCompleted = (Button) view.findViewById(R.id.btn_completed);
-        Bundle bundle = getArguments();
-        int position = bundle.getInt("POSITION");
-        Toast.makeText(getActivity(), "position" + position, Toast.LENGTH_SHORT).show();
+        mBtnClose.setOnClickListener(mClickListener);
+        mBtnCompleted.setOnClickListener(mClickListener);
+
+    }
+
+    public void setMarkCompletedListener(MarkCompleteListener markCompleteListener) {
+        mListener = markCompleteListener;
     }
 }

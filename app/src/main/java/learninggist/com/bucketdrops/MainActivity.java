@@ -47,17 +47,23 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
     };
 
+    private MarkCompleteListener mMarkCompleteListener = new MarkCompleteListener() {
+        @Override
+        public void MarkCompleted(int position) {
+            mAdapter.setCompleted(position);
+        }
+    };
+
     private void showMarkDialog(int position) {
         MarkDialog markDialog = new MarkDialog();
         Bundle bundle = new Bundle();
         bundle.putInt("POSITION", position);
+        markDialog.setMarkCompletedListener(mMarkCompleteListener);
         markDialog.setArguments(bundle);
         markDialog.show(getSupportFragmentManager(), "MARK");
         markDialog.setCancelable(true);
 
     }
-
-    private SwipeListener mSwipeListener;
 
 
     private RealmChangeListener

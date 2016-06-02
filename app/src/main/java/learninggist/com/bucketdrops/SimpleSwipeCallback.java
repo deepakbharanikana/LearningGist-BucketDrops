@@ -9,7 +9,7 @@ import android.support.v7.widget.helper.ItemTouchHelper;
 public class SimpleSwipeCallback extends ItemTouchHelper.Callback {
     SwipeListener mSwipeListener;
 
-    public SimpleSwipeCallback(SwipeListener listener) {
+    public  SimpleSwipeCallback(SwipeListener listener) {
         mSwipeListener = listener;
     }
 

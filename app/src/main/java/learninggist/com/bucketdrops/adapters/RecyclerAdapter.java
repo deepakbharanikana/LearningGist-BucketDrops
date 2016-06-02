@@ -1,6 +1,8 @@
 package learninggist.com.bucketdrops.adapters;
 
 import android.content.Context;
+import android.graphics.drawable.Drawable;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,6 +17,7 @@ import learninggist.com.bucketdrops.DropListener;
 import learninggist.com.bucketdrops.R;
 import learninggist.com.bucketdrops.SwipeListener;
 import learninggist.com.bucketdrops.beans.Drop;
+import learninggist.com.bucketdrops.extras.Util;
 
 /**
  * Created by Deepak on 5/21/16.
@@ -70,10 +73,11 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
         if (holder instanceof DropHolder) {
-            if(mItems.get(position).isValid()) {
+            if (mItems.get(position).isValid()) {
                 DropHolder dropHolder = (DropHolder) holder;
                 Drop drop = mItems.get(position);
                 dropHolder.bindData(drop.getWhatJob());
+                dropHolder.setBackground(drop.isCompleted());
             }
         }
     }
@@ -101,13 +105,26 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         }
     }
 
+    public void setCompleted(int position) {
+        if (position < mItems.size()) {
+            mRealm.beginTransaction();
+            mItems.get(position).setCompleted(true);
+            mRealm.commitTransaction();
+            notifyItemChanged(position);
+        }
+    }
+
 
     public class DropHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         private TextView mDropInfo;
         private TextView mDropDate;
+        private View mItemView;
+        private Context mContext;
 
         public DropHolder(View itemView) {
             super(itemView);
+            mContext = itemView.getContext();
+            mItemView = itemView;
             mDropInfo = (TextView) itemView.findViewById(R.id.tv_dropInfo);
             mDropDate = (TextView) itemView.findViewById(R.id.tv_dropDate);
             itemView.setOnClickListener(this);
@@ -120,6 +137,16 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         @Override
         public void onClick(View v) {
             mDropListener.MarkCompleted(getAdapterPosition());
+        }
+
+        public void setBackground(boolean completed) {
+            Drawable drawable;
+            if (completed) {
+                drawable = ContextCompat.getDrawable(mContext, R.color.bg_drop_complete);
+            } else {
+                drawable = ContextCompat.getDrawable(mContext, R.drawable.list_item_background_selector);
+            }
+            Util.setBackground(mItemView, drawable);
         }
     }
 
