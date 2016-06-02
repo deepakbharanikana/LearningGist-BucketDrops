@@ -12,6 +12,8 @@ import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageButton;
 
+import java.util.Calendar;
+
 import io.realm.Realm;
 import learninggist.com.bucketdrops.beans.Drop;
 
@@ -64,7 +66,15 @@ public class AddDialog extends DialogFragment implements View.OnClickListener {
 
     private void addDrop() {
         Realm realm = Realm.getDefaultInstance();
-        Drop drop = new Drop(mEtWhat.getText().toString(), System.currentTimeMillis(), 0, false);
+        String date = mDatePicker.getDayOfMonth() + "/" + mDatePicker.getMonth() + "/" + mDatePicker.getYear();
+        Calendar calendar = Calendar.getInstance();
+        calendar.set(Calendar.DAY_OF_MONTH, mDatePicker.getDayOfMonth());
+        calendar.set(Calendar.MONTH, mDatePicker.getMonth());
+        calendar.set(Calendar.YEAR, mDatePicker.getYear());
+        calendar.set(Calendar.HOUR, 0);
+        calendar.set(Calendar.MINUTE, 0);
+        calendar.set(Calendar.SECOND, 0);
+        Drop drop = new Drop(mEtWhat.getText().toString(), System.currentTimeMillis(), calendar.getTimeInMillis(), false);
         realm.beginTransaction();
         realm.copyToRealmOrUpdate(drop);
         realm.commitTransaction();

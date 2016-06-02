@@ -6,6 +6,8 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.Toolbar;
 import android.support.v7.widget.helper.ItemTouchHelper;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -137,4 +139,27 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         dialog.setCancelable(true);
     }
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.main_menu, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+        switch (id){
+            case R.id.menu_add:
+                break;
+            case R.id.menu_descending:
+                break;
+            case R.id.menu_ascending:
+                break;
+            case R.id.menu_complete:
+                break;
+            case R.id.menu_incomplete:
+                break;
+        }
+        return super.onOptionsItemSelected(item);
+    }
 }
